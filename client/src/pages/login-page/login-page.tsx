@@ -1,5 +1,3 @@
-import { Logo } from "../../components/logo/logo"
-
 function LoginPage() {
     return(
         <div className="page page--gray page--login">
@@ -7,7 +5,9 @@ function LoginPage() {
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              < Logo />
+              <a className="header__logo-link" href="main.html">
+                <img className="header__logo" src="img/logo.svg" alt="Rent service logo" width="81" height="41" />
+              </a>
             </div>
           </div>
         </div>
