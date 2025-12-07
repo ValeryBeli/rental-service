@@ -1,19 +1,46 @@
-import { CitiesCard } from "../../components/cities-card/cities-card";
+import { JSX, useState } from "react";
+import { Logo } from "../../components/logo/logo";
+import { CitiesCardList } from "../../components/cities-card-list/cities-card-list";
+import { OffersList } from "../../types/offer";
+import { Map } from "../../components/map/map";
+import { MapPoint } from "../../types/map";
+import { amsterdamCity } from "../../mocks/city";
 
 type MainPageProps = {
     rentalOffersCount: number;
+    offersList: OffersList[];
 }
 
-function MainPage({rentalOffersCount} : MainPageProps): React.JSX.Element {
-    return(
+function MainPage({ rentalOffersCount, offersList }: MainPageProps): JSX.Element {
+    const [selectedPoint, setSelectedPoint] = useState<MapPoint | undefined>(undefined);
+    
+    // Фильтруем предложения для Амстердама
+    const amsterdamOffers = offersList.filter(offer => offer.city.name === 'Amsterdam');
+    
+    // Преобразуем предложения в точки для карты
+    const mapPoints: MapPoint[] = amsterdamOffers.map(offer => ({
+        id: offer.id,
+        title: offer.title,
+        lat: offer.location.latitude,
+        lng: offer.location.longitude
+    }));
+
+    const handleCardMouseEnter = (id: string) => {
+        const point = mapPoints.find((point) => point.id === id);
+        setSelectedPoint(point);
+    };
+
+    const handleCardMouseLeave = () => {
+        setSelectedPoint(undefined);
+    };
+
+    return (
         <div className="page page--gray page--main">
             <header className="header">
                 <div className="container">
                     <div className="header__wrapper">
                         <div className="header__left">
-                            <a className="header__logo-link header__logo-link--active">
-                                <img className="header__logo" src="img/logo.svg" alt="Rent service logo" width="81" height="41"/> 
-                            </a>
+                            <Logo />
                         </div>
                         <nav className="header__nav">
                             <ul className="header__nav-list">
@@ -78,7 +105,7 @@ function MainPage({rentalOffersCount} : MainPageProps): React.JSX.Element {
                     <div className="cities__places-container container">
                         <section className="cities__places places">
                             <h2 className="visually-hidden">Places</h2>
-                            <b className="places__found">{rentalOffersCount} places to stay in Amsterdam</b>
+                            <b className="places__found">{amsterdamOffers.length} places to stay in Amsterdam</b>
                             <form className="places__sorting" action="#" method="get">
                                 <span className="places__sorting-caption">Sort by</span>
                                 <span className="places__sorting-type" tabIndex={0}>
@@ -94,18 +121,19 @@ function MainPage({rentalOffersCount} : MainPageProps): React.JSX.Element {
                                     <li className="places__option" tabIndex={0}>Top rated first</li>
                                 </ul>
                             </form>
-                            <div className="cities__places-list places__list tabs__content">
-
-                                <CitiesCard/>
-                                <CitiesCard/>
-                                <CitiesCard/>
-                                <CitiesCard/>
-                                <CitiesCard/>
-                                
-                            </div>
+                            <CitiesCardList 
+                                offersList={amsterdamOffers}
+                                onCardMouseEnter={handleCardMouseEnter}
+                                onCardMouseLeave={handleCardMouseLeave}
+                            />
                         </section>
                         <div className="cities__right-section">
-                            <section className="cities__map map"></section>
+                            <Map 
+                                city={amsterdamCity}
+                                points={mapPoints}
+                                selectedPoint={selectedPoint}
+                                className="cities__map map"
+                            />
                         </div>
                     </div>
                 </div>
