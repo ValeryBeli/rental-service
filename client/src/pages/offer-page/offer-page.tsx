@@ -7,9 +7,10 @@ import { ReviewsList } from "../../components/reviews-list/reviews-list";
 import { Map } from "../../components/map/map";
 import { MapPoint } from "../../types/map";
 import { reviewsData } from "../../mocks/reviews-data";
-import { amsterdamCity } from "../../mocks/city";
 import { NearPlacesList } from "../../components/near-places-list/near-places-list";
 import { useState } from 'react';
+import { City } from "../../types/map";
+import { Review } from "../../types/review";
 
 type OfferPageProps = {
   offers: FullOffer[];
@@ -21,17 +22,17 @@ function OfferPage({ offers, offersList }: OfferPageProps){
   const offer = offers.find((item) => item.id === params.id);
   
   const [selectedPoint, setSelectedPoint] = useState<MapPoint | undefined>(undefined);
-  
+  const [reviews, setReviews] = useState<Review[]>(reviewsData);
+
   if (!offer){
     return <NotFoundPage/>;
   }
 
-  // Получаем 3 случайных предложения неподалёку (для демонстрации)
+  // Берём все предложения из того же города (кроме текущего offer)
   const nearbyOffers = offersList
-    .filter(item => item.id !== offer.id)
-    .slice(0, 3);
+    .filter(item => item.city.name === offer.city.name && item.id !== offer.id);
 
-  // Преобразуем в точки для карты
+  // Преобразуем в точки для карты — текущий offer + все предложения этого же города
   const mapPoints: MapPoint[] = [
     {
       id: offer.id,
@@ -39,11 +40,11 @@ function OfferPage({ offers, offersList }: OfferPageProps){
       lat: offer.location.latitude,
       lng: offer.location.longitude
     },
-    ...nearbyOffers.map(offer => ({
-      id: offer.id,
-      title: offer.title,
-      lat: offer.location.latitude,
-      lng: offer.location.longitude
+    ...nearbyOffers.map((o) => ({
+      id: o.id,
+      title: o.title,
+      lat: o.location.latitude,
+      lng: o.location.longitude
     }))
   ];
 
@@ -57,6 +58,18 @@ function OfferPage({ offers, offersList }: OfferPageProps){
   };
 
   const galleryImages = offer.images.slice(0, 6);
+
+  // Подготовить объект City для компонента Map на основе offer.city
+  const mapCity: City = {
+    title: offer.city.name,
+    lat: offer.city.location.latitude,
+    lng: offer.city.location.longitude,
+    zoom: offer.city.location.zoom,
+  };
+
+  const handleAddReview = (newReview: Review) => {
+    setReviews((prev) => [newReview, ...prev]);
+  };
 
   return (
     <div className="page">
@@ -184,13 +197,13 @@ function OfferPage({ offers, offersList }: OfferPageProps){
                 </div>
               </div>
               
-              <ReviewsList reviews={reviewsData} />
-              <ReviewsForm />
+              <ReviewsList reviews={reviews} />
+              <ReviewsForm onSubmit={handleAddReview} />
             </div>
           </div>
           <section className="offer__map map">
             <Map 
-              city={amsterdamCity}
+              city={mapCity}
               points={mapPoints}
               selectedPoint={selectedPoint || {
                 id: offer.id,

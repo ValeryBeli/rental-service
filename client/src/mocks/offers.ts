@@ -3,183 +3,353 @@ import { FullOffer } from '../types/offer';
 export const offers: FullOffer[] = [
   {
     id: '1',
-    title: 'Luxurious apartment in historic district',
+    title: 'Cozy apartment in the city center',
     type: 'apartment',
-    price: 140,
+    price: 160,
     city: {
       name: 'Amsterdam',
-      location: {
-        latitude: 52.37454,
-        longitude: 4.897976,
-        zoom: 13
-      }
+      location: { latitude: 52.37454, longitude: 4.897976, zoom: 13 }
     },
-    location: {
-      latitude: 52.3909553943508,
-      longitude: 4.85309666406198,
-      zoom: 16
-    },
+    location: { latitude: 52.3909553943508, longitude: 4.85309666406198, zoom: 16 },
     isFavorite: true,
     isPremium: true,
     rating: 4.9,
     description: 'A stunning apartment in the heart of historic Amsterdam with modern amenities and classic charm.',
     bedrooms: 2,
-    goods: [
-      'Wi-Fi',
-      'Washing machine',
-      'Towels',
-      'Heating',
-      'Coffee machine',
-      'Kitchen',
-      'Dishwasher',
-      'Cabel TV',
-      'Fridge',
-      'Balcony'
-    ],
-    host: {
-      name: 'Angelina',
-      avatarUrl: 'img/avatar-angelina.jpg',
-      isPro: true
-    },
-    images: [
-      'img/apartment-01.jpg',
-      'img/apartment-small-03.jpg',
-      'img/apartment-small-04.jpg',
-      'img/room.jpg'
-    ],
+    goods: ['Wi-Fi','Washing machine','Towels','Heating','Coffee machine','Kitchen'],
+    host: { name: 'Angelina', avatarUrl: 'img/avatar-angelina.jpg', isPro: true },
+    images: ['img/apartment-01.jpg','img/apartment-small-03.jpg','img/apartment-small-04.jpg','img/room.jpg'],
     maxAdults: 3
   },
   {
     id: '2',
-    title: 'Cozy studio with city view',
+    title: 'Nice room for tourists',
     type: 'room',
     price: 75,
     city: {
       name: 'Amsterdam',
-      location: {
-        latitude: 52.37454,
-        longitude: 4.897976,
-        zoom: 13
-      }
+      location: { latitude: 52.37454, longitude: 4.897976, zoom: 13 }
     },
-    location: {
-      latitude: 52.3609553943508,
-      longitude: 4.85309666406198,
-      zoom: 16
-    },
+    location: { latitude: 52.3609553943508, longitude: 4.85309666406198, zoom: 16 },
     isFavorite: true,
     isPremium: false,
     rating: 4.3,
     description: 'Compact and comfortable studio perfect for solo travelers looking to explore the city.',
     bedrooms: 1,
-    goods: [
-      'Wi-Fi',
-      'Heating',
-      'Coffee machine',
-      'Kitchenette',
-      'Fridge',
-      'TV'
-    ],
-    host: {
-      name: 'Max',
-      avatarUrl: 'img/avatar-max.jpg',
-      isPro: false
-    },
-    images: [
-      'img/room.jpg',
-      'img/apartment-03.jpg'
-    ],
+    goods: ['Wi-Fi','Heating','Kitchenette','Fridge','TV'],
+    host: { name: 'Max', avatarUrl: 'img/avatar-max.jpg', isPro: false },
+    images: ['img/room.jpg','img/apartment-03.jpg'],
     maxAdults: 1
   },
+
+  // Amsterdam (keep unchanged)
   {
     id: '3',
-    title: 'Modern loft in city center',
+    title: 'Modern apartment near the airport',
     type: 'apartment',
     price: 145,
     city: {
-      name: 'Cologne',
-      location: {
-        latitude: 50.938361,
-        longitude: 6.959974,
-        zoom: 13
-      }
+      name: 'Amsterdam',
+      location: { latitude: 52.37454, longitude: 4.897976, zoom: 13 }
     },
-    location: {
-      latitude: 50.938361,
-      longitude: 6.959974,
-      zoom: 16
-    },
+    location: { latitude: 52.3909553943508, longitude: 4.929309666406198, zoom: 16 },
     isFavorite: false,
     isPremium: true,
     rating: 4.7,
-    description: 'Contemporary loft space with open layout and premium finishes in the vibrant city center.',
+    description: 'Contemporary loft space with open layout and premium finishes.',
     bedrooms: 3,
-    goods: [
-      'Wi-Fi',
-      'Washing machine',
-      'Towels',
-      'Heating',
-      'Coffee machine',
-      'Kitchen',
-      'Dishwasher',
-      'Smart TV',
-      'Fridge',
-      'Workspace'
-    ],
-    host: {
-      name: 'Maria',
-      avatarUrl: 'img/avatar-angelina.jpg',
-      isPro: true
-    },
-    images: [
-      'img/apartment-02.jpg',
-      'img/apartment-01.jpg',
-      'img/room.jpg'
-    ],
+    goods: ['Wi-Fi','Washing machine','Towels','Heating','Coffee machine','Kitchen','Dishwasher'],
+    host: { name: 'Maria', avatarUrl: 'img/avatar-angelina.jpg', isPro: true },
+    images: ['img/apartment-02.jpg','img/apartment-01.jpg','img/room.jpg'],
     maxAdults: 4
   },
   {
     id: '4',
-    title: 'Charming house with garden',
+    title: 'A cozy home for the company',
     type: 'house',
     price: 195,
     city: {
-      name: 'Brussels',
-      location: {
-        latitude: 50.846557,
-        longitude: 4.351697,
-        zoom: 13
-      }
+      name: 'Amsterdam',
+      location: { latitude: 52.37454, longitude: 4.897976, zoom: 13 }
     },
-    location: {
-      latitude: 50.846557,
-      longitude: 4.351697,
-      zoom: 16
-    },
+    location: { latitude: 52.3809553943508, longitude: 4.939309666406198, zoom: 16 },
     isFavorite: false,
     isPremium: true,
     rating: 4.1,
-    description: 'Quaint house featuring a private garden and traditional architecture with modern comforts.',
+    description: 'Spacious house suitable for groups and families.',
     bedrooms: 2,
-    goods: [
-      'Wi-Fi',
-      'Heating',
-      'Kitchen',
-      'Fridge',
-      'Garden',
-      'Parking',
-      'Terrace'
-    ],
-    host: {
-      name: 'Anton',
-      avatarUrl: 'img/avatar-max.jpg',
-      isPro: true
-    },
-    images: [
-      'img/apartment-small-03.jpg',
-      'img/apartment-03.jpg',
-      'img/apartment-01.jpg'
-    ],
+    goods: ['Wi-Fi','Heating','Kitchen','Fridge','Garden'],
+    host: { name: 'Anton', avatarUrl: 'img/avatar-max.jpg', isPro: true },
+    images: ['img/apartment-03.jpg','img/room.jpg','img/apartment-01.jpg'],
     maxAdults: 4
+  },
+
+  // Paris
+  {
+    id: '5',
+    title: 'Charming flat near the Seine',
+    type: 'apartment',
+    price: 130,
+    city: { name: 'Paris', location: { latitude: 48.8566, longitude: 2.3522, zoom: 13 } },
+    location: { latitude: 48.8584, longitude: 2.3469, zoom: 16 },
+    isFavorite: false,
+    isPremium: false,
+    rating: 4.6,
+    description: 'Lovely flat within walking distance of the river and major sights.',
+    bedrooms: 1,
+    goods: ['Wi-Fi','Heating','Kitchen','Coffee machine'],
+    host: { name: 'Sophie', avatarUrl: 'img/avatar-angelina.jpg', isPro: false },
+    images: ['img/apartment-03.jpg','img/apartment-01.jpg'],
+    maxAdults: 2
+  },
+
+  // -- MISSING FullOffer for id 6 (Cologne) — added below
+  {
+    id: '6',
+    title: 'Comfortable studio in Cologne center',
+    type: 'studio',
+    price: 95,
+    city: { name: 'Cologne', location: { latitude: 50.9375, longitude: 6.9603, zoom: 13 } },
+    location: { latitude: 50.9379, longitude: 6.9600, zoom: 16 },
+    isFavorite: false,
+    isPremium: false,
+    rating: 4.2,
+    description: 'Compact and bright studio in the heart of Cologne, close to transport and sights.',
+    bedrooms: 1,
+    goods: ['Wi-Fi','Heating','Kitchen','Fridge'],
+    host: { name: 'Felix', avatarUrl: 'img/avatar-max.jpg', isPro: false },
+    images: ['img/apartment-small-03.jpg','img/room.jpg'],
+    maxAdults: 2
+  },
+
+  // Paris extras
+  {
+    id: '10',
+    title: 'Elegant studio near Latin Quarter',
+    type: 'studio',
+    price: 110,
+    city: { name: 'Paris', location: { latitude: 48.8566, longitude: 2.3522, zoom: 13 } },
+    location: { latitude: 48.8500, longitude: 2.3460, zoom: 16 },
+    isFavorite: false,
+    isPremium: false,
+    rating: 4.4,
+    description: 'Cozy studio located in the charming Latin Quarter.',
+    bedrooms: 1,
+    goods: ['Wi-Fi','Heating','Kitchen'],
+    host: { name: 'Claire', avatarUrl: 'img/avatar-angelina.jpg', isPro: false },
+    images: ['img/apartment-small-03.jpg'],
+    maxAdults: 2
+  },
+  {
+    id: '11',
+    title: 'Sunny flat with Eiffel view',
+    type: 'apartment',
+    price: 180,
+    city: { name: 'Paris', location: { latitude: 48.8566, longitude: 2.3522, zoom: 13 } },
+    location: { latitude: 48.8606, longitude: 2.3376, zoom: 16 },
+    isFavorite: true,
+    isPremium: true,
+    rating: 4.8,
+    description: 'Bright flat with partial Eiffel Tower views.',
+    bedrooms: 2,
+    goods: ['Wi-Fi','Kitchen','Coffee machine','Heating'],
+    host: { name: 'Julien', avatarUrl: 'img/avatar-max.jpg', isPro: true },
+    images: ['img/apartment-01.jpg','img/apartment-03.jpg'],
+    maxAdults: 3
+  },
+
+  // Cologne extras (keep existing id 3 as earlier and add matching full offers 12,13)
+  {
+    id: '12',
+    title: 'Bright apartment next to cathedral',
+    type: 'apartment',
+    price: 125,
+    city: { name: 'Cologne', location: { latitude: 50.9375, longitude: 6.9603, zoom: 13 } },
+    location: { latitude: 50.9400, longitude: 6.9570, zoom: 16 },
+    isFavorite: false,
+    isPremium: true,
+    rating: 4.5,
+    description: 'Apartment with cathedral views and easy access to public transport.',
+    bedrooms: 2,
+    goods: ['Wi-Fi','Kitchen','Heating'],
+    host: { name: 'Felix', avatarUrl: 'img/avatar-max.jpg', isPro: false },
+    images: ['img/apartment-02.jpg','img/apartment-01.jpg'],
+    maxAdults: 3
+  },
+  {
+    id: '13',
+    title: 'Cozy room near Rhine river',
+    type: 'room',
+    price: 85,
+    city: { name: 'Cologne', location: { latitude: 50.9375, longitude: 6.9603, zoom: 13 } },
+    location: { latitude: 50.9350, longitude: 6.9620, zoom: 16 },
+    isFavorite: true,
+    isPremium: false,
+    rating: 4.1,
+    description: 'Small comfortable room close to the Rhine promenade.',
+    bedrooms: 1,
+    goods: ['Wi-Fi','Heating'],
+    host: { name: 'Anna', avatarUrl: 'img/avatar-angelina.jpg', isPro: false },
+    images: ['img/room.jpg'],
+    maxAdults: 1
+  },
+
+  // Brussels: ensure first-list id (7) has FullOffer
+  {
+    id: '7',
+    title: 'Bright apartment near Grand Place',
+    type: 'apartment',
+    price: 120,
+    city: { name: 'Brussels', location: { latitude: 50.8503, longitude: 4.3517, zoom: 13 } },
+    location: { latitude: 50.8466, longitude: 4.3520, zoom: 16 },
+    isFavorite: true,
+    isPremium: false,
+    rating: 4.4,
+    description: 'Sunny apartment within walking distance of Grand Place and local markets.',
+    bedrooms: 1,
+    goods: ['Wi-Fi','Heating','Kitchen','Coffee machine'],
+    host: { name: 'Luc', avatarUrl: 'img/avatar-max.jpg', isPro: false },
+    images: ['img/apartment-02.jpg','img/apartment-01.jpg'],
+    maxAdults: 2
+  },
+  {
+    id: '14',
+    title: 'Stylish loft in historic quarter',
+    type: 'loft',
+    price: 140,
+    city: { name: 'Brussels', location: { latitude: 50.8503, longitude: 4.3517, zoom: 13 } },
+    location: { latitude: 50.8520, longitude: 4.3490, zoom: 16 },
+    isFavorite: false,
+    isPremium: true,
+    rating: 4.7,
+    description: 'Large loft with high ceilings and modern kitchen.',
+    bedrooms: 2,
+    goods: ['Wi-Fi','Washing machine','Kitchen'],
+    host: { name: 'Luc', avatarUrl: 'img/avatar-max.jpg', isPro: false },
+    images: ['img/apartment-01.jpg'],
+    maxAdults: 4
+  },
+  {
+    id: '15',
+    title: 'Comfortable small flat near Sablon',
+    type: 'apartment',
+    price: 100,
+    city: { name: 'Brussels', location: { latitude: 50.8503, longitude: 4.3517, zoom: 13 } },
+    location: { latitude: 50.8480, longitude: 4.3525, zoom: 16 },
+    isFavorite: false,
+    isPremium: false,
+    rating: 4.0,
+    description: 'Well-located flat for two, near antique shops and cafes.',
+    bedrooms: 1,
+    goods: ['Wi-Fi','Kitchen'],
+    host: { name: 'Marie', avatarUrl: 'img/avatar-angelina.jpg', isPro: false },
+    images: ['img/apartment-small-04.jpg'],
+    maxAdults: 2
+  },
+
+  // Hamburg: ensure id 8 exists (added)
+  {
+    id: '8',
+    title: 'Modern loft in Hamburg HafenCity',
+    type: 'loft',
+    price: 150,
+    city: { name: 'Hamburg', location: { latitude: 53.5511, longitude: 9.9937, zoom: 13 } },
+    location: { latitude: 53.5489, longitude: 9.9940, zoom: 16 },
+    isFavorite: false,
+    isPremium: true,
+    rating: 4.8,
+    description: 'Spacious loft with river views and contemporary interior.',
+    bedrooms: 2,
+    goods: ['Wi-Fi','Washing machine','Kitchen','Elevator'],
+    host: { name: 'Lukas', avatarUrl: 'img/avatar-max.jpg', isPro: true },
+    images: ['img/apartment-01.jpg','img/apartment-02.jpg'],
+    maxAdults: 3
+  },
+  {
+    id: '16',
+    title: 'Charming flat near Elbe',
+    type: 'apartment',
+    price: 135,
+    city: { name: 'Hamburg', location: { latitude: 53.5511, longitude: 9.9937, zoom: 13 } },
+    location: { latitude: 53.5530, longitude: 9.9900, zoom: 16 },
+    isFavorite: false,
+    isPremium: false,
+    rating: 4.5,
+    description: 'Comfortable apartment with balcony and river access.',
+    bedrooms: 2,
+    goods: ['Wi-Fi','Kitchen','Balcony'],
+    host: { name: 'Lukas', avatarUrl: 'img/avatar-max.jpg', isPro: true },
+    images: ['img/apartment-03.jpg'],
+    maxAdults: 3
+  },
+  {
+    id: '17',
+    title: 'Compact room for business travelers',
+    type: 'room',
+    price: 90,
+    city: { name: 'Hamburg', location: { latitude: 53.5511, longitude: 9.9937, zoom: 13 } },
+    location: { latitude: 53.5500, longitude: 9.9950, zoom: 16 },
+    isFavorite: false,
+    isPremium: false,
+    rating: 4.2,
+    description: 'Small efficient room near conference venues.',
+    bedrooms: 1,
+    goods: ['Wi-Fi','Workspace'],
+    host: { name: 'Marta', avatarUrl: 'img/avatar-angelina.jpg', isPro: false },
+    images: ['img/room.jpg'],
+    maxAdults: 1
+  },
+
+  // Dusseldorf
+  {
+    id: '9',
+    title: 'Quiet house near the Rhine',
+    type: 'house',
+    price: 170,
+    city: { name: 'Dusseldorf', location: { latitude: 51.2277, longitude: 6.7735, zoom: 13 } },
+    location: { latitude: 51.2300, longitude: 6.7750, zoom: 16 },
+    isFavorite: false,
+    isPremium: false,
+    rating: 4.0,
+    description: 'Comfortable family house near the promenade.',
+    bedrooms: 3,
+    goods: ['Wi-Fi','Kitchen','Garden','Parking'],
+    host: { name: 'Clara', avatarUrl: 'img/avatar-angelina.jpg', isPro: false },
+    images: ['img/apartment-small-04.jpg','img/room.jpg'],
+    maxAdults: 5
+  },
+  {
+    id: '18',
+    title: 'Modern apartment in city center',
+    type: 'apartment',
+    price: 150,
+    city: { name: 'Dusseldorf', location: { latitude: 51.2277, longitude: 6.7735, zoom: 13 } },
+    location: { latitude: 51.2285, longitude: 6.7710, zoom: 16 },
+    isFavorite: false,
+    isPremium: true,
+    rating: 4.6,
+    description: 'Central apartment near shops and nightlife.',
+    bedrooms: 2,
+    goods: ['Wi-Fi','Kitchen','Elevator'],
+    host: { name: 'Clara', avatarUrl: 'img/avatar-angelina.jpg', isPro: false },
+    images: ['img/apartment-02.jpg'],
+    maxAdults: 3
+  },
+  {
+    id: '19',
+    title: 'Cozy studio near Königsallee',
+    type: 'studio',
+    price: 110,
+    city: { name: 'Dusseldorf', location: { latitude: 51.2277, longitude: 6.7735, zoom: 13 } },
+    location: { latitude: 51.2260, longitude: 6.7740, zoom: 16 },
+    isFavorite: false,
+    isPremium: false,
+    rating: 4.1,
+    description: 'Compact studio ideal for short stays.',
+    bedrooms: 1,
+    goods: ['Wi-Fi','Kitchen'],
+    host: { name: 'Oliver', avatarUrl: 'img/avatar-max.jpg', isPro: false },
+    images: ['img/apartment-small-03.jpg'],
+    maxAdults: 2
   }
 ];

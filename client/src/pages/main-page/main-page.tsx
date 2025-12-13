@@ -1,10 +1,16 @@
-import { JSX, useState } from "react";
+import { JSX, useMemo, useState } from "react";
 import { Logo } from "../../components/logo/logo";
 import { CitiesCardList } from "../../components/cities-card-list/cities-card-list";
 import { OffersList } from "../../types/offer";
 import { Map } from "../../components/map/map";
 import { MapPoint } from "../../types/map";
-import { amsterdamCity } from "../../mocks/city";
+import { CitiesList } from "../../components/cities-list/cities-list";
+import { CITIES_LOCATION, SortOffersType } from "../../const";
+import { useAppSelector } from "../../hooks";
+import { CityOffer } from "../../types/offer";
+import { City } from "../../types/map";
+import { SortOffer } from "../../types/sort";
+import { SortOptions } from "../../components/sort-options/sort-options";
 
 type MainPageProps = {
     rentalOffersCount: number;
@@ -13,12 +19,35 @@ type MainPageProps = {
 
 function MainPage({ rentalOffersCount, offersList }: MainPageProps): JSX.Element {
     const [selectedPoint, setSelectedPoint] = useState<MapPoint | undefined>(undefined);
-    
-    // Фильтруем предложения для Амстердама
-    const amsterdamOffers = offersList.filter(offer => offer.city.name === 'Amsterdam');
-    
-    // Преобразуем предложения в точки для карты
-    const mapPoints: MapPoint[] = amsterdamOffers.map(offer => ({
+    const [selectedSort, setSelectedSort] = useState<SortOffer>('Popular');
+
+    // Получаем объект выбранного города из Redux (state.city)
+    const selectedCity = useAppSelector((state) => (state as any).city) as CityOffer | undefined;
+
+    // Если в стейте нет города - используем Paris из CITIES_LOCATION (фолбек)
+    const selectedCityOffer = selectedCity ?? CITIES_LOCATION.find((c) => c.name === 'Paris')!;
+
+    const selectedCityName = selectedCityOffer.name;
+
+    // Фильтруем предложения по выбранному городу
+    const cityOffers = useMemo(() => {
+      const filtered = offersList.filter(offer => offer.city.name === selectedCityName);
+
+      switch (selectedSort) {
+        case 'PriceToHigh':
+          return [...filtered].sort((a, b) => a.price - b.price);
+        case 'PriceToLow':
+          return [...filtered].sort((a, b) => b.price - a.price);
+        case 'TopRated':
+          return [...filtered].sort((a, b) => b.rating - a.rating);
+        case 'Popular':
+        default:
+          return filtered; // исходный порядок
+      }
+    }, [offersList, selectedCityName, selectedSort]);
+
+    // Преобразуем предложения в точки для карты (карта не зависит от порядка)
+    const mapPoints: MapPoint[] = cityOffers.map(offer => ({
         id: offer.id,
         title: offer.title,
         lat: offer.location.latitude,
@@ -32,6 +61,14 @@ function MainPage({ rentalOffersCount, offersList }: MainPageProps): JSX.Element
 
     const handleCardMouseLeave = () => {
         setSelectedPoint(undefined);
+    };
+
+    // Подготовить объект City для компонента Map
+    const mapCity: City = {
+        title: selectedCityOffer.name,
+        lat: selectedCityOffer.location.latitude,
+        lng: selectedCityOffer.location.longitude,
+        zoom: selectedCityOffer.location.zoom,
     };
 
     return (
@@ -67,69 +104,27 @@ function MainPage({ rentalOffersCount, offersList }: MainPageProps): JSX.Element
                 <h1 className="visually-hidden">Cities</h1>
                 <div className="tabs">
                     <section className="locations container">
-                        <ul className="locations__list tabs__list">
-                            <li className="locations__item">
-                                <a className="locations__item-link tabs__item" href="#">
-                                    <span>Paris</span>
-                                </a>
-                            </li>
-                            <li className="locations__item">
-                                <a className="locations__item-link tabs__item" href="#">
-                                    <span>Cologne</span>
-                                </a>
-                            </li>
-                            <li className="locations__item">
-                                <a className="locations__item-link tabs__item" href="#">
-                                    <span>Brussels</span>
-                                </a>
-                            </li>
-                            <li className="locations__item">
-                                <a className="locations__item-link tabs__item tabs__item--active">
-                                    <span>Amsterdam</span>
-                                </a>
-                            </li>
-                            <li className="locations__item">
-                                <a className="locations__item-link tabs__item" href="#">
-                                    <span>Hamburg</span>
-                                </a>
-                            </li>
-                            <li className="locations__item">
-                                <a className="locations__item-link tabs__item" href="#">
-                                    <span>Dusseldorf</span>
-                                </a>
-                            </li>
-                        </ul>
+                        <CitiesList selectedCity={selectedCityOffer} />
                     </section>
                 </div>
                 <div className="cities">
                     <div className="cities__places-container container">
                         <section className="cities__places places">
                             <h2 className="visually-hidden">Places</h2>
-                            <b className="places__found">{amsterdamOffers.length} places to stay in Amsterdam</b>
-                            <form className="places__sorting" action="#" method="get">
-                                <span className="places__sorting-caption">Sort by</span>
-                                <span className="places__sorting-type" tabIndex={0}>
-                                    Popular
-                                    <svg className="places__sorting-arrow" width="7" height="4">
-                                        <use href="#icon-arrow-select"></use>
-                                    </svg>
-                                </span>
-                                <ul className="places__options places__options--custom places__options--opened">
-                                    <li className="places__option places__option--active" tabIndex={0}>Popular</li>
-                                    <li className="places__option" tabIndex={0}>Price: low to high</li>
-                                    <li className="places__option" tabIndex={0}>Price: high to low</li>
-                                    <li className="places__option" tabIndex={0}>Top rated first</li>
-                                </ul>
-                            </form>
+                            <b className="places__found">{cityOffers.length} places to stay in {selectedCityName}</b>
+
+                            {/* Сортировка — компонент */}
+                            <SortOptions selectedSort={selectedSort} onChange={setSelectedSort} />
+
                             <CitiesCardList 
-                                offersList={amsterdamOffers}
+                                offersList={cityOffers}
                                 onCardMouseEnter={handleCardMouseEnter}
                                 onCardMouseLeave={handleCardMouseLeave}
                             />
                         </section>
                         <div className="cities__right-section">
                             <Map 
-                                city={amsterdamCity}
+                                city={mapCity}
                                 points={mapPoints}
                                 selectedPoint={selectedPoint}
                                 className="cities__map map"
