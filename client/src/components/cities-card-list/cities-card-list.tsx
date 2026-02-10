@@ -20,6 +20,7 @@ function CitiesCardList({ offersList, onCardMouseEnter, onCardMouseLeave }: Citi
                     previewImage={item.previewImage} 
                     isPremium={item.isPremium} 
                     rating={item.rating}
+                    isFavorite={item.isFavorite}
                     onCardMouseEnter={onCardMouseEnter}
                     onCardMouseLeave={onCardMouseLeave}
                 />

@@ -15,9 +15,10 @@ import { SortOptions } from "../../components/sort-options/sort-options";
 type MainPageProps = {
     rentalOffersCount: number;
     offersList: OffersList[];
+    favoritesCount: number;
 }
 
-function MainPage({ rentalOffersCount, offersList }: MainPageProps): JSX.Element {
+function MainPage({ rentalOffersCount, offersList, favoritesCount }: MainPageProps): JSX.Element {
     const [selectedPoint, setSelectedPoint] = useState<MapPoint | undefined>(undefined);
     const [selectedSort, setSelectedSort] = useState<SortOffer>('Popular');
 
@@ -82,15 +83,15 @@ function MainPage({ rentalOffersCount, offersList }: MainPageProps): JSX.Element
                         <nav className="header__nav">
                             <ul className="header__nav-list">
                                 <li className="header__nav-item user">
-                                    <a className="header__nav-link header__nav-link--profile" href="#">
+                                    <a className="header__nav-link header__nav-link--profile" href="/favorites">
                                         <div className="header__avatar-wrapper user__avatar-wrapper">
                                         </div>
                                         <span className="header__user-name user__name">Myemail@gmail.com</span>
-                                        <span className="header__favorite-count">3</span>
+                                        <span className="header__favorite-count">{ favoritesCount }</span>
                                     </a>
                                 </li>
                                 <li className="header__nav-item">
-                                    <a className="header__nav-link" href="#">
+                                    <a className="header__nav-link" href="/login">
                                         <span className="header__signout">Sign out</span>
                                     </a>
                                 </li>

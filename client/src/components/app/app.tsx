@@ -18,12 +18,13 @@ type AppMainPageProps = {
 }
 
 function App({ rentalOffersCount, offers, offersList }: AppMainPageProps): JSX.Element {
+    const favoritesCount = offersList.filter((o) => o.isFavorite).length;
     return (
         <BrowserRouter>
             <Routes>
                 <Route
                     path={AppRoute.Main}
-                    element={<MainPage rentalOffersCount={rentalOffersCount} offersList={offersList} />}
+                    element={<MainPage rentalOffersCount={rentalOffersCount} offersList={offersList} favoritesCount={favoritesCount}/>}
                 />
                 <Route
                     path={AppRoute.Login}
@@ -31,7 +32,7 @@ function App({ rentalOffersCount, offers, offersList }: AppMainPageProps): JSX.E
                 />
                 <Route
                     path={`${AppRoute.Offer}/:id`} 
-                    element={<OfferPage offers={offers} offersList={offersList} />}
+                    element={<OfferPage offers={offers} offersList={offersList} favoritesCount={favoritesCount}/>}
                 />
                 <Route
                     path={AppRoute.Favorites}
@@ -39,7 +40,7 @@ function App({ rentalOffersCount, offers, offersList }: AppMainPageProps): JSX.E
                         <PrivateRoute
                             authorizationStatus={AuthorizationStatus.Auth}
                         >
-                            <FavoritesPage offersList={offersList}/>
+                            <FavoritesPage offersList={offersList.filter((o) => o.isFavorite)} favoritesCount={favoritesCount}/>
                         </PrivateRoute>
                     }
                 />
