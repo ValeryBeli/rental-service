@@ -1,9 +1,6 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
 import sequelize from './config/database.js';
-import Offer from './models/offer.js';
-import Review from './models/review.js';
-import User from './models/user.js';
 import router from './routes/index.js';
 import errorMiddleware from './middleware/ErrorHandlingMiddleware.js';
 import cors from 'cors';
