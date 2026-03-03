@@ -6,7 +6,8 @@ import { Map } from "../../components/map/map";
 import { MapPoint } from "../../types/map";
 import { CitiesList } from "../../components/cities-list/cities-list";
 import { CITIES_LOCATION, SortOffersType } from "../../const";
-import { useAppSelector } from "../../hooks";
+import { useAppSelector, useAppDispatch } from "../../hooks";
+import { logoutAction } from '../../store/api-action';
 import { CityOffer } from "../../types/offer";
 import { City } from "../../types/map";
 import { SortOffer } from "../../types/sort";
@@ -19,6 +20,7 @@ type MainPageProps = {
 }
 
 function MainPage({ rentalOffersCount, offersList, favoritesCount }: MainPageProps): JSX.Element {
+    const dispatch = useAppDispatch();
     const [selectedPoint, setSelectedPoint] = useState<MapPoint | undefined>(undefined);
     const [selectedSort, setSelectedSort] = useState<SortOffer>('Popular');
 
@@ -91,7 +93,14 @@ function MainPage({ rentalOffersCount, offersList, favoritesCount }: MainPagePro
                                     </a>
                                 </li>
                                 <li className="header__nav-item">
-                                    <a className="header__nav-link" href="/login">
+                                    <a
+                                        className="header__nav-link"
+                                        href="/login"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            dispatch(logoutAction());
+                                        }}
+                                    >
                                         <span className="header__signout">Sign out</span>
                                     </a>
                                 </li>

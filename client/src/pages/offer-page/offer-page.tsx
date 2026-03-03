@@ -9,6 +9,8 @@ import { MapPoint } from "../../types/map";
 import { reviewsData } from "../../mocks/reviews-data";
 import { NearPlacesList } from "../../components/near-places-list/near-places-list";
 import { useState } from 'react';
+import { useAppDispatch } from "../../hooks";
+import { logoutAction } from '../../store/api-action';
 import { City } from "../../types/map";
 import { Review } from "../../types/review";
 
@@ -19,6 +21,7 @@ type OfferPageProps = {
 }
 
 function OfferPage({ offers, offersList, favoritesCount }: OfferPageProps){
+  const dispatch = useAppDispatch();
   const params = useParams();
   const offer = offers.find((item) => item.id === params.id);
   
@@ -91,7 +94,11 @@ function OfferPage({ offers, offersList, favoritesCount }: OfferPageProps){
                   </a>
                 </li>
                 <li className="header__nav-item">
-                  <a className="header__nav-link" href="/login">
+                  <a
+                    className="header__nav-link"
+                    href="/login"
+                    onClick={(e) => { e.preventDefault(); dispatch(logoutAction()); }}
+                  >
                     <span className="header__signout">Sign out</span>
                   </a>
                 </li>

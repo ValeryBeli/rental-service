@@ -2,6 +2,8 @@ import { FavoritesCardList } from "../../components/favorites-card-list/favorite
 import { FavoritesCard } from "../../components/favorites-card/favorites-card";
 import { Logo } from "../../components/logo/logo";
 import { OffersList } from "../../types/offer";
+import { useAppDispatch } from "../../hooks";
+import { logoutAction } from '../../store/api-action';
 
 type FavoritesPageProps = {
     offersList: OffersList[];
@@ -9,6 +11,7 @@ type FavoritesPageProps = {
 }
 
 function FavoritesPage({ offersList, favoritesCount }: FavoritesPageProps) {
+  const dispatch = useAppDispatch();
         return(
         <div className="page">
       <header className="header">
@@ -28,7 +31,11 @@ function FavoritesPage({ offersList, favoritesCount }: FavoritesPageProps) {
                   </a>
                 </li>
                 <li className="header__nav-item">
-                  <a className="header__nav-link" href="/login">
+                  <a
+                    className="header__nav-link"
+                    href="/login"
+                    onClick={(e) => { e.preventDefault(); dispatch(logoutAction()); }}
+                  >
                     <span className="header__signout">Sign out</span>
                   </a>
                 </li>

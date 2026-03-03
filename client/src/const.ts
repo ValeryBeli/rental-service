@@ -24,10 +24,18 @@ const SortOffersType = {
     TopRated: 'Top rated first',
 } ;
 
+const APIRoute = {
+  Offers : '/offers',
+  Login : '/login',
+  Logout : '/logout',
+};
+
 const URL_MARKER_DEFAULT = '/img/pin.svg';
 const URL_MARKER_CURRENT = '/img/pin-active.svg';
 
-export { Setting, AppRoute, AuthorizationStatus, URL_MARKER_DEFAULT, URL_MARKER_CURRENT, SortOffersType };
+const TIMEOUT_SHOW_ERROR = 2000;
+
+export { Setting, AppRoute, APIRoute, AuthorizationStatus, URL_MARKER_DEFAULT, URL_MARKER_CURRENT, SortOffersType, TIMEOUT_SHOW_ERROR };
 
 // Список городов с координатами
 export const CITIES_LOCATION: CityOffer[] = [

@@ -8,7 +8,6 @@ async function getAllOffers(req, res, next) {
         const offers = await Offer.findAll();
         const adaptedOffers = offers.map(adaptOfferToClient);
         res.status(200).json(adaptedOffers);
-        res.send(offers);
     } catch (error) {
         console.error('Не удалось получить список предложений:', error)
     }
