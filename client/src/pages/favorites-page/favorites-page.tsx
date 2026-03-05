@@ -2,8 +2,10 @@ import { FavoritesCardList } from "../../components/favorites-card-list/favorite
 import { FavoritesCard } from "../../components/favorites-card/favorites-card";
 import { Logo } from "../../components/logo/logo";
 import { OffersList } from "../../types/offer";
-import { useAppDispatch } from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import { logoutAction } from '../../store/api-action';
+import { getAuthorizationStatus, getUserEmail } from "../../store/selectors";
+import { AuthorizationStatus } from "../../const";
 
 type FavoritesPageProps = {
     offersList: OffersList[];
@@ -11,8 +13,8 @@ type FavoritesPageProps = {
 }
 
 function FavoritesPage({ offersList, favoritesCount }: FavoritesPageProps) {
-  const dispatch = useAppDispatch();
-        return(
+  const dispatch = useAppDispatch();    const authorizationStatus = useAppSelector(getAuthorizationStatus);
+    const userEmail = useAppSelector(getUserEmail);        return(
         <div className="page">
       <header className="header">
         <div className="container">
@@ -22,23 +24,33 @@ function FavoritesPage({ offersList, favoritesCount }: FavoritesPageProps) {
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <a className="header__nav-link header__nav-link--profile" href="/favorites">
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    <span className="header__user-name user__name">Myemail@gmail.com</span>
-                    <span className="header__favorite-count">{ favoritesCount }</span>
-                  </a>
-                </li>
-                <li className="header__nav-item">
-                  <a
-                    className="header__nav-link"
-                    href="/login"
-                    onClick={(e) => { e.preventDefault(); dispatch(logoutAction()); }}
-                  >
-                    <span className="header__signout">Sign out</span>
-                  </a>
-                </li>
+                {authorizationStatus === AuthorizationStatus.Auth ? (
+                  <>
+                    <li className="header__nav-item user">
+                      <a className="header__nav-link header__nav-link--profile" href="/favorites">
+                        <div className="header__avatar-wrapper user__avatar-wrapper">
+                        </div>
+                        <span className="header__user-name user__name">{userEmail}</span>
+                        <span className="header__favorite-count">{ favoritesCount }</span>
+                      </a>
+                    </li>
+                    <li className="header__nav-item">
+                      <a
+                        className="header__nav-link"
+                        href="/login"
+                        onClick={(e) => { e.preventDefault(); dispatch(logoutAction()); }}
+                      >
+                        <span className="header__signout">Sign out</span>
+                      </a>
+                    </li>
+                  </>
+                ) : (
+                  <li className="header__nav-item">
+                    <a className="header__nav-link" href="/login">
+                      <span className="header__login">Sign in</span>
+                    </a>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>

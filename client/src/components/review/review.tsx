@@ -1,4 +1,5 @@
 import { Review as ReviewType } from '../../types/review';
+import { getImageSrc } from '../../utils';
 
 type ReviewProps = {
   review: ReviewType;
@@ -21,7 +22,7 @@ function Review({ review }: ReviewProps) {
         <div className="reviews__avatar-wrapper user__avatar-wrapper">
           <img 
             className="reviews__avatar user__avatar" 
-            src={`/${review.user.avatarUrl}`} 
+            src={getImageSrc(review.user.avatarUrl)} 
             width="54" 
             height="54" 
             alt="Reviews avatar" 

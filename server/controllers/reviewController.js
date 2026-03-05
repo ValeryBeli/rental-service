@@ -19,7 +19,14 @@ const addReview = async (req, res, next) => {
             authorId: userId,
             OfferId: offerId
         });
-        res.status(201).json(review);
+
+        // Получаем полный объект с информацией об авторе
+        const fullReview = await Review.findByPk(review.id, {
+            include: { model: User, as: 'author' }
+        });
+
+        const adaptedReview = adaptReviewToClient(fullReview);
+        res.status(201).json(adaptedReview);
     } catch (error) {
         console.error(error);
         next(ApiError.badRequest('Ошибка при добавлении комментария'));

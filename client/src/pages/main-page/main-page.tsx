@@ -5,9 +5,10 @@ import { OffersList } from "../../types/offer";
 import { Map } from "../../components/map/map";
 import { MapPoint } from "../../types/map";
 import { CitiesList } from "../../components/cities-list/cities-list";
-import { CITIES_LOCATION, SortOffersType } from "../../const";
+import { CITIES_LOCATION, SortOffersType, AuthorizationStatus } from "../../const";
 import { useAppSelector, useAppDispatch } from "../../hooks";
 import { logoutAction } from '../../store/api-action';
+import { getAuthorizationStatus, getUserEmail } from '../../store/selectors';
 import { CityOffer } from "../../types/offer";
 import { City } from "../../types/map";
 import { SortOffer } from "../../types/sort";
@@ -23,6 +24,8 @@ function MainPage({ rentalOffersCount, offersList, favoritesCount }: MainPagePro
     const dispatch = useAppDispatch();
     const [selectedPoint, setSelectedPoint] = useState<MapPoint | undefined>(undefined);
     const [selectedSort, setSelectedSort] = useState<SortOffer>('Popular');
+    const authorizationStatus = useAppSelector(getAuthorizationStatus);
+    const userEmail = useAppSelector(getUserEmail);
 
     // Получаем объект выбранного города из Redux (state.city)
     const selectedCity = useAppSelector((state) => (state as any).city) as CityOffer | undefined;
@@ -84,26 +87,36 @@ function MainPage({ rentalOffersCount, offersList, favoritesCount }: MainPagePro
                         </div>
                         <nav className="header__nav">
                             <ul className="header__nav-list">
-                                <li className="header__nav-item user">
-                                    <a className="header__nav-link header__nav-link--profile" href="/favorites">
-                                        <div className="header__avatar-wrapper user__avatar-wrapper">
-                                        </div>
-                                        <span className="header__user-name user__name">Myemail@gmail.com</span>
-                                        <span className="header__favorite-count">{ favoritesCount }</span>
-                                    </a>
-                                </li>
-                                <li className="header__nav-item">
-                                    <a
-                                        className="header__nav-link"
-                                        href="/login"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            dispatch(logoutAction());
-                                        }}
-                                    >
-                                        <span className="header__signout">Sign out</span>
-                                    </a>
-                                </li>
+                                {authorizationStatus === AuthorizationStatus.Auth ? (
+                                    <>
+                                        <li className="header__nav-item user">
+                                            <a className="header__nav-link header__nav-link--profile" href="/favorites">
+                                                <div className="header__avatar-wrapper user__avatar-wrapper">
+                                                </div>
+                                                <span className="header__user-name user__name">{userEmail}</span>
+                                                <span className="header__favorite-count">{ favoritesCount }</span>
+                                            </a>
+                                        </li>
+                                        <li className="header__nav-item">
+                                            <a
+                                                className="header__nav-link"
+                                                href="/login"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    dispatch(logoutAction());
+                                                }}
+                                            >
+                                                <span className="header__signout">Sign out</span>
+                                            </a>
+                                        </li>
+                                    </>
+                                ) : (
+                                    <li className="header__nav-item">
+                                        <a className="header__nav-link" href="/login">
+                                            <span className="header__login">Sign in</span>
+                                        </a>
+                                    </li>
+                                )}
                             </ul>
                         </nav>
                     </div>

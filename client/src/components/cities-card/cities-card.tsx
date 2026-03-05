@@ -1,5 +1,6 @@
 import { AppRoute } from "../../const";
 import { Link } from "react-router-dom";
+import { getImageSrc } from '../../utils';
 
 type CitiesCardProps = {
     id: string;
@@ -49,7 +50,7 @@ function CitiesCard({
             )}
             <div className="cities__image-wrapper place-card__image-wrapper">
                 <Link to={`${AppRoute.Offer}/${id}`}>
-                    <img className="place-card__image" src={previewImage} width="260" height="200" alt="Place image" />
+                    <img className="place-card__image" src={getImageSrc(previewImage)} width="260" height="200" alt="Place image" />
                 </Link>
             </div>
             <div className="place-card__info">

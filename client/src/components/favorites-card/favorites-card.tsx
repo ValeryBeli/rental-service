@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getImageSrc } from '../../utils';
 import { AppRoute } from "../../const";
 import { Link } from "react-router-dom";
 
@@ -24,7 +25,7 @@ function FavoritesCard({ id, title, type, price, previewImage, isPremium, rating
             )}
             <div className="favorites__image-wrapper place-card__image-wrapper">
                 <Link to={`${AppRoute.Offer}/${id}`}>
-                    <img className="place-card__image" src={previewImage} width="150" height="110" alt="Place image" />
+                    <img className="place-card__image" src={getImageSrc(previewImage)} width="150" height="110" alt="Place image" />
                 </Link>
             </div>
             <div className="favorites__card-info place-card__info">

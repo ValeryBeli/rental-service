@@ -44,13 +44,17 @@ export const createAPI = (): AxiosInstance => {
     api.interceptors.response.use(
         (response) => response,
         (error: AxiosError<DetailMessageType>) => {
-            if (error.config?.url === '/login') {
-            return Promise.reject(error); 
+            // don't show notification for missing token when checking auth
+            if (
+                error.config?.url === '/login' &&
+                error.response?.status === StatusCodes.UNAUTHORIZED
+            ) {
+                // simply propagate the error without showing message
+                return Promise.reject(error);
             }
-            
             if (error.response && shouldDisplayError(error.response)) {
-            const detailMessage = error.response.data;
-            processErrorHandle(detailMessage.message);
+                const detailMessage = error.response.data;
+                processErrorHandle(detailMessage.message);
             }
             throw error;
         }

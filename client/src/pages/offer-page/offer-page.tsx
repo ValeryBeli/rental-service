@@ -6,11 +6,17 @@ import { ReviewsForm } from "../../components/reviews-form/reviews-form";
 import { ReviewsList } from "../../components/reviews-list/reviews-list";
 import { Map } from "../../components/map/map";
 import { MapPoint } from "../../types/map";
-import { reviewsData } from "../../mocks/reviews-data";
+import { /*reviewsData*/ } from "../../mocks/reviews-data";
 import { NearPlacesList } from "../../components/near-places-list/near-places-list";
-import { useState } from 'react';
-import { useAppDispatch } from "../../hooks";
+import { useState, useEffect } from 'react';
+import { getImageSrc, normalizeOffer } from '../../utils';
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import { logoutAction } from '../../store/api-action';
+import { getAuthorizationStatus, getUserEmail, getCurrentOffer, getOfferReviews, getIsOfferDataLoading } from "../../store/selectors";
+import { fetchOfferAction, fetchOfferReviewsAction, postReviewAction } from '../../store/api-action';
+import { setCurrentOffer } from '../../store/action';
+import { AuthorizationStatus } from "../../const";
+import { LoadingPage } from "../../components/loading-page/loading-page";
 import { City } from "../../types/map";
 import { Review } from "../../types/review";
 
@@ -22,11 +28,49 @@ type OfferPageProps = {
 
 function OfferPage({ offers, offersList, favoritesCount }: OfferPageProps){
   const dispatch = useAppDispatch();
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const userEmail = useAppSelector(getUserEmail);
   const params = useParams();
-  const offer = offers.find((item) => item.id === params.id);
-  
+  const currentOffer = useAppSelector(getCurrentOffer) as FullOffer | null;
+  const offerReviews = useAppSelector(getOfferReviews);
+  const isOfferLoading = useAppSelector(getIsOfferDataLoading);
+
   const [selectedPoint, setSelectedPoint] = useState<MapPoint | undefined>(undefined);
-  const [reviews, setReviews] = useState<Review[]>(reviewsData);
+  const [reviews, setReviews] = useState<Review[]>([]);
+
+  useEffect(() => {
+    const id = params.id;
+    if (!id) return;
+    const local = offers.find((o) => o.id === id);
+    // Если предложение уже есть в props `offers`, не делаем запрос за оффером
+    if (!local) {
+      dispatch(fetchOfferAction(id));
+    } else {
+      // Подставим локальные данные в стор для единообразия отображения
+      dispatch(setCurrentOffer(local as any));
+    }
+    // Комментарии запрашиваем всегда (может быть пустой список)
+    dispatch(fetchOfferReviewsAction(id));
+  }, [dispatch, params.id]);
+
+  useEffect(() => {
+    if (offerReviews) setReviews(offerReviews);
+  }, [offerReviews]);
+
+  // API и мок-данные могут использовать разные имена свойств. Когда
+  // пришёл ответ с сервера мы преобразуем его в FullOffer, но на всякий
+  // случай подстраховываемся здесь: если данных нет, пытаемся взять
+  // тот же объект, что пришёл по prop `offers`.
+  let offer = currentOffer ?? offers.find((item) => item.id === params.id);
+  
+  // Нормализуем offer так, чтобы он имел необходимые поля независимо от источника (сервер или мок)
+  if (offer) {
+    offer = normalizeOffer(offer);
+  }
+
+  if (isOfferLoading) {
+    return <LoadingPage /> as unknown as JSX.Element;
+  }
 
   if (!offer){
     return <NotFoundPage/>;
@@ -61,7 +105,9 @@ function OfferPage({ offers, offersList, favoritesCount }: OfferPageProps){
     setSelectedPoint(undefined);
   };
 
-  const galleryImages = offer.images.slice(0, 6);
+  // картинки могут приходить либо в поле `images` (моки) либо в `photos`
+  // (ответ с реального API). Используем первое, которое есть.
+  const galleryImages = ((offer as any).images || (offer as any).photos || []).slice(0, 6);
 
   // Подготовить объект City для компонента Map на основе offer.city
   const mapCity: City = {
@@ -71,8 +117,26 @@ function OfferPage({ offers, offersList, favoritesCount }: OfferPageProps){
     zoom: offer.city.location.zoom,
   };
 
-  const handleAddReview = (newReview: Review) => {
-    setReviews((prev) => [newReview, ...prev]);
+  const handleAddReview = async (newReview: Review): Promise<void> => {
+    const id = params.id;
+    if (!id) {
+      throw new Error('Offer ID is missing');
+    }
+    
+    try {
+      const result = await dispatch(postReviewAction({ 
+        offerId: id, 
+        comment: newReview.comment, 
+        rating: newReview.rating 
+      }));
+      
+      // Проверяем был ли успех (createAsyncThunk возвращает fulfilled или rejected action)
+      if (result.type.includes('rejected')) {
+        throw new Error('Failed to post review');
+      }
+    } catch (error) {
+      throw error;
+    }
   };
 
   return (
@@ -85,23 +149,33 @@ function OfferPage({ offers, offersList, favoritesCount }: OfferPageProps){
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <a className="header__nav-link header__nav-link--profile" href="/favorites">
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    <span className="header__user-name user__name">Myemail@gmail.com</span>
-                    <span className="header__favorite-count">{ favoritesCount }</span>
-                  </a>
-                </li>
-                <li className="header__nav-item">
-                  <a
-                    className="header__nav-link"
-                    href="/login"
-                    onClick={(e) => { e.preventDefault(); dispatch(logoutAction()); }}
-                  >
-                    <span className="header__signout">Sign out</span>
-                  </a>
-                </li>
+                {authorizationStatus === AuthorizationStatus.Auth ? (
+                  <>
+                    <li className="header__nav-item user">
+                      <a className="header__nav-link header__nav-link--profile" href="/favorites">
+                        <div className="header__avatar-wrapper user__avatar-wrapper">
+                        </div>
+                        <span className="header__user-name user__name">{userEmail}</span>
+                        <span className="header__favorite-count">{ favoritesCount }</span>
+                      </a>
+                    </li>
+                    <li className="header__nav-item">
+                      <a
+                        className="header__nav-link"
+                        href="/login"
+                        onClick={(e) => { e.preventDefault(); dispatch(logoutAction()); }}
+                      >
+                        <span className="header__signout">Sign out</span>
+                      </a>
+                    </li>
+                  </>
+                ) : (
+                  <li className="header__nav-item">
+                    <a className="header__nav-link" href="/login">
+                      <span className="header__login">Sign in</span>
+                    </a>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>
@@ -116,7 +190,7 @@ function OfferPage({ offers, offersList, favoritesCount }: OfferPageProps){
                 <div key={image} className="offer__image-wrapper">
                   <img 
                     className="offer__image" 
-                    src={`/${image}`} 
+                    src={getImageSrc(image)} 
                     alt="Photo studio" 
                   />
                 </div>
@@ -185,7 +259,7 @@ function OfferPage({ offers, offersList, favoritesCount }: OfferPageProps){
                   <div className={`offer__avatar-wrapper ${offer.host.isPro ? 'offer__avatar-wrapper--pro' : ''} user__avatar-wrapper`}>
                     <img 
                       className="offer__avatar user__avatar" 
-                      src={`/${offer.host.avatarUrl}`} 
+                      src={getImageSrc(offer.host.avatarUrl)} 
                       width="74" 
                       height="74" 
                       alt="Host avatar" 
@@ -206,10 +280,12 @@ function OfferPage({ offers, offersList, favoritesCount }: OfferPageProps){
               </div>
               
               <ReviewsList reviews={reviews} />
-              <ReviewsForm onSubmit={handleAddReview} />
+              {authorizationStatus === AuthorizationStatus.Auth && (
+                <ReviewsForm onSubmit={handleAddReview} />
+              )}
             </div>
           </div>
-          <section className="offer__map map">
+          <section className="offer__map">
             <Map 
               city={mapCity}
               points={mapPoints}
@@ -219,7 +295,6 @@ function OfferPage({ offers, offersList, favoritesCount }: OfferPageProps){
                 lat: offer.location.latitude,
                 lng: offer.location.longitude
               }}
-              className="offer__map"
             />
           </section>
         </section>

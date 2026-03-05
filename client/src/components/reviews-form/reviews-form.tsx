@@ -2,12 +2,14 @@ import React, { useState, FormEvent, ChangeEvent } from "react";
 import { Review } from '../../types/review';
 
 type ReviewsFormProps = {
-  onSubmit: (review: Review) => void;
+  onSubmit: (review: Review) => Promise<void>;
+  isLoading?: boolean;
 };
 
 const MIN_REVIEW_LENGTH = 10;
 
-function ReviewsForm({ onSubmit }: ReviewsFormProps) {
+function ReviewsForm({ onSubmit, isLoading = false }: ReviewsFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     rating: 0,
     review: ''
@@ -34,7 +36,7 @@ function ReviewsForm({ onSubmit }: ReviewsFormProps) {
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (isSubmitDisabled) {
+    if (isSubmitDisabled || isSubmitting) {
       return;
     }
 
@@ -50,12 +52,22 @@ function ReviewsForm({ onSubmit }: ReviewsFormProps) {
       }
     };
 
-    onSubmit(newReview);
-
-    setFormData({
-      rating: 0,
-      review: ''
-    });
+    setIsSubmitting(true);
+    
+    onSubmit(newReview)
+      .then(() => {
+        // Очищаем форму только после успешной отправки
+        setFormData({
+          rating: 0,
+          review: ''
+        });
+      })
+      .catch(() => {
+        // При ошибке форма остаётся заполненной, пользователь может повторить попытку
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   return (
@@ -114,9 +126,9 @@ function ReviewsForm({ onSubmit }: ReviewsFormProps) {
         <button
           className="reviews__submit form__submit button"
           type="submit"
-          disabled={isSubmitDisabled}
+          disabled={isSubmitDisabled || isSubmitting}
         >
-          Submit
+          {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
       </div>
     </form>

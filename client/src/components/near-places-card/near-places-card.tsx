@@ -1,6 +1,7 @@
 import { OffersList } from '../../types/offer';
 import { Link } from 'react-router-dom';
 import { AppRoute } from '../../const';
+import { getImageSrc } from '../../utils';
 
 type NearPlacesCardProps = {
   offer: OffersList;
@@ -38,9 +39,7 @@ function NearPlacesCard({ offer, onCardMouseEnter, onCardMouseLeave }: NearPlace
         <Link to={`${AppRoute.Offer}/${offer.id}`}>
           <img 
             className="place-card__image" 
-            src={offer.previewImage}
-            width="260" 
-            height="200" 
+            src={getImageSrc(offer.previewImage)}
             alt="Place image" 
           />
         </Link>

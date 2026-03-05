@@ -94,7 +94,7 @@ function Map({ city, points, selectedPoint, className = 'cities__map' }: MapProp
 
   return (
     <div
-      style={{ height: '100%' }}
+      style={{ width: '100%', height: '100%' }}
       className={className}
       ref={mapRef}
     />

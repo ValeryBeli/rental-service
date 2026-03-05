@@ -3,9 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import  App  from './components/app/app';
 import { Setting } from './const';
-import { offers } from './mocks/offers';
-import { offersList } from './mocks/offers-list';
-import { reviews } from './mocks/reviews';
 import { store } from './store';
 import { ErrorMessage } from './components/error-message/error-message';
 import { checkAuthAction, fetchOffersAction } from './store/api-action';
@@ -23,8 +20,6 @@ root.render(
         <ErrorMessage/>
         <App
         rentalOffersCount={ Setting.rentOffersCount }
-        offersList={ offersList }
-        offers = {offers}
         />
         </Provider>
     </React.StrictMode>

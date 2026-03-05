@@ -10,11 +10,13 @@ export type CityOffer = {
     location: OfferLocation;
 }
 
-type HostOffer = {
-    name: string;
-    avatarUrl: string;
-    isPro: boolean;
-}
+export type HostAuthor = {
+    id: string;
+    username: string;
+    email: string;
+    userType: string;
+    avatar: string;
+};
 
 export type FullOffer = {
     id: string;
@@ -27,11 +29,25 @@ export type FullOffer = {
     isPremium: boolean;
     rating: number;
     description: string;
-    bedrooms: number;
-    goods: string[];
-    host: HostOffer;
-    images: string[];
-    maxAdults: number;
+    rooms: number;
+    guests: number;
+    features: string[];
+    author?: HostAuthor;
+    photos?: string[];
+    previewImage?: string;
+    commentsCount?: number;
+    publishDate?: string;
+    
+    // Legacy mock fields (for backward compatibility)
+    host?: {
+        name: string;
+        avatarUrl: string;
+        isPro: boolean;
+    };
+    images?: string[];
+    bedrooms?: number;
+    goods?: string[];
+    maxAdults?: number;
 };
 
 export type OffersList = {

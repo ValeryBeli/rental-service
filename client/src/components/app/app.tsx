@@ -16,15 +16,25 @@ import { LoadingPage } from '../loading-page/loading-page';
 
 type AppMainPageProps = {
     rentalOffersCount: number;
-    offers: FullOffer[];
-    offersList: OffersList[];
 }
 
-function App({ rentalOffersCount, offers, offersList }: AppMainPageProps): JSX.Element {
+function App({ rentalOffersCount }: AppMainPageProps): JSX.Element {
+    const offersList = useAppSelector((state) => (state as any).offers) as OffersList[];
     const favoritesCount = offersList.filter((o) => o.isFavorite).length;
     const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+    const userEmail = useAppSelector((state) => state.userEmail);
     const isQuestionsDataLoading = useAppSelector((state) => state.isOffersDataLoading);
-    if (authorizationStatus === AuthorizationStatus.Unknown || isQuestionsDataLoading) {
+    const isUserDataLoading = useAppSelector((state) => state.isUserDataLoading);
+    
+    // Показываем LoadingPage если:
+    // 1. Статус авторизации не определён (неизвестен)
+    // 2. Офферы загружаются
+    // 3. Авторизированы, но email ещё не загружен
+    if (
+        authorizationStatus === AuthorizationStatus.Unknown || 
+        isQuestionsDataLoading || 
+        (authorizationStatus === AuthorizationStatus.Auth && !userEmail)
+    ) {
         return (
             <LoadingPage />
         );
@@ -42,17 +52,21 @@ function App({ rentalOffersCount, offers, offersList }: AppMainPageProps): JSX.E
                 />
                 <Route
                     path={`${AppRoute.Offer}/:id`} 
-                    element={<OfferPage offers={offers} offersList={offersList} favoritesCount={favoritesCount}/>}
+                    element={<OfferPage offers={[]} offersList={offersList} favoritesCount={favoritesCount}/>} 
                 />
                 <Route
                     path={AppRoute.Favorites}
                     element={
-                        <PrivateRoute
+                            <PrivateRoute
                             authorizationStatus={authorizationStatus}
                         >
                             <FavoritesPage offersList={offersList.filter((o) => o.isFavorite)} favoritesCount={favoritesCount}/>
                         </PrivateRoute>
                     }
+                />
+                <Route
+                    path="/404"
+                    element={<NotFoundPage />}
                 />
                 <Route
                     path="*"

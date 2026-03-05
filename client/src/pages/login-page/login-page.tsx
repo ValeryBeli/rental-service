@@ -6,13 +6,14 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { loginAction } from '../../store/api-action';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import type { AuthData } from '../../types/user-data';
-import { getAuthorizationStatus } from '../../store/selectors';
+import { getAuthorizationStatus, getError } from '../../store/selectors';
 
 function LoginPage() {
   const loginRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const dispatch = useAppDispatch();
   const userAuthorizationStatus = useAppSelector(getAuthorizationStatus);
+  const error = useAppSelector(getError);
 
   if (userAuthorizationStatus === AuthorizationStatus.Auth) {
     return <Navigate to={ AppRoute.Main }/>;
@@ -49,6 +50,7 @@ function LoginPage() {
             <h1 className="login__title">Sign in</h1>
             <form className="login__form form" action="#" method="post" onSubmit={
             handleSubmit }>
+              {error && <p className="login__error" style={{color: 'red', textAlign: 'center'}}>{error}</p>}
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">E-mail</label>
                 <input ref={ loginRef } className="login__input form__input" type="email" name="email" id="email" placeholder="Email" required/>
