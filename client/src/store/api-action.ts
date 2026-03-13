@@ -2,7 +2,7 @@ import { AxiosInstance } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State } from '../types/state.js';
 import { OffersList } from '../types/offer.js';
-import { offersCityList, requireAuthorization, setUserInfo, setError, setOffersDataLoadingStatus, setUserDataLoadingStatus, setCurrentOffer, setOfferReviews, setOfferDataLoadingStatus, updateOfferRating } from './action';
+import { offersCityList, requireAuthorization, setUserInfo, setError, setOffersDataLoadingStatus, setUserDataLoadingStatus, setCurrentOffer, setOfferReviews, setOfferDataLoadingStatus, updateOfferRating, setOfferFavorite } from './action';
 import { saveToken, dropToken } from '../services/token';
 import { APIRoute, AuthorizationStatus } from '../const';
 import { getToken } from '../services/token';
@@ -73,6 +73,27 @@ const loginAction = createAsyncThunk<
         }
     }
 );
+
+        const toggleFavoriteAction = createAsyncThunk<void, {offerId: string; currentStatus: boolean}, {
+          dispatch: AppDispatch;
+          state: State;
+          extra: AxiosInstance;
+        }>(
+          'offer/toggleFavorite',
+          async ({ offerId, currentStatus }, { dispatch, extra: api, rejectWithValue }) => {
+            try {
+              // server expects status as '1' to mark favorite, '0' otherwise
+              const newStatus = currentStatus ? 0 : 1;
+              const { data } = await api.post(`/favorite/${offerId}/${newStatus}`);
+              // Update client state: server returns the offer
+              dispatch(setOfferFavorite(offerId, data.isFavorite));
+            } catch (error: any) {
+              const errorMessage = error?.response?.data?.message || 'Не удалось обновить избранное';
+              dispatch(setError(errorMessage));
+              return rejectWithValue(errorMessage);
+            }
+          }
+        );
 
 const logoutAction = createAsyncThunk<void, undefined, {
   dispatch: AppDispatch;
@@ -168,4 +189,4 @@ const clearErrorAction = createAsyncThunk<void, undefined, {
           }
         );
 
-        export { fetchOffersAction, checkAuthAction, loginAction, logoutAction, clearErrorAction, fetchOfferAction, fetchOfferReviewsAction, postReviewAction };
+        export { fetchOffersAction, checkAuthAction, loginAction, logoutAction, clearErrorAction, fetchOfferAction, fetchOfferReviewsAction, postReviewAction, toggleFavoriteAction };

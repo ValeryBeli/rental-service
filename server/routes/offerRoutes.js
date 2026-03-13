@@ -7,12 +7,12 @@ const router = new Router();
 
 router.get('/offers', getAllOffers);
 router.get('/offers/:id', getFullOffer);
-router.get('/favorite',  authenticateToken, getFavoriteOffers);
+router.get('/favorite', getFavoriteOffers);
 router.post('/offers', upload.fields([
     { name: 'previewImage', maxCount: 1 },
     { name: 'photos', maxCount: 6 }
 ]), createOffer);
-router.post('/favorite/:offerId/:status',authenticateToken , toggleFavorite);
+router.post('/favorite/:offerId/:status', toggleFavorite);
 
 
 export default router;

@@ -11,6 +11,7 @@ import { NearPlacesList } from "../../components/near-places-list/near-places-li
 import { useState, useEffect } from 'react';
 import { getImageSrc, normalizeOffer } from '../../utils';
 import { useAppDispatch, useAppSelector } from "../../hooks";
+import { toggleFavoriteAction } from '../../store/api-action';
 import { logoutAction } from '../../store/api-action';
 import { getAuthorizationStatus, getUserEmail, getCurrentOffer, getOfferReviews, getIsOfferDataLoading } from "../../store/selectors";
 import { fetchOfferAction, fetchOfferReviewsAction, postReviewAction } from '../../store/api-action';
@@ -209,12 +210,14 @@ function OfferPage({ offers, offersList, favoritesCount }: OfferPageProps){
                 <h1 className="offer__name">
                   {offer.title}
                 </h1>
-                <button className="offer__bookmark-button button" type="button">
-                  <svg className="offer__bookmark-icon" width="31" height="33">
-                    <use xlinkHref="/img/sprite.svg#icon-bookmark" style={offer.isFavorite ? {stroke: '#4481c3', fill: '#4481c3'} : {}}></use>
-                  </svg>
-                  <span className="visually-hidden">To bookmarks</span>
-                </button>
+                {authorizationStatus === AuthorizationStatus.Auth && (
+                  <button className={"offer__bookmark-button button" + (offer.isFavorite ? ' offer__bookmark-button--active' : '')} type="button" onClick={() => dispatch(toggleFavoriteAction({ offerId: offer.id, currentStatus: (offer as any).isFavorite }))}>
+                    <svg className="offer__bookmark-icon" width="31" height="33">
+                      <use xlinkHref="/img/sprite.svg#icon-bookmark"></use>
+                    </svg>
+                    <span className="visually-hidden">To bookmarks</span>
+                  </button>
+                )}
               </div>
               
               <div className="offer__rating rating">

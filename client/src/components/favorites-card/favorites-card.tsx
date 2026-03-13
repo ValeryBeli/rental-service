@@ -2,6 +2,10 @@ import { useState } from "react";
 import { getImageSrc } from '../../utils';
 import { AppRoute } from "../../const";
 import { Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { toggleFavoriteAction } from '../../store/api-action';
+import { getAuthorizationStatus } from '../../store/selectors';
+import { AuthorizationStatus } from '../../const';
 
 type FavoritesCardProps = {
     id: string;
@@ -16,6 +20,8 @@ type FavoritesCardProps = {
 function FavoritesCard({ id, title, type, price, previewImage, isPremium, rating }: FavoritesCardProps) {
     const ratingPercent = Math.round(rating * 20);
     const [, setOfferId] = useState('');
+    const dispatch = useAppDispatch();
+    const authorizationStatus = useAppSelector(getAuthorizationStatus);
     return (
         <article className="favorites__card place-card">
             {isPremium && (
@@ -34,12 +40,14 @@ function FavoritesCard({ id, title, type, price, previewImage, isPremium, rating
                         <b className="place-card__price-value">&euro;{price}</b>
                         <span className="place-card__price-text">&#47;&nbsp;night</span>
                     </div>
-                    <button className="place-card__bookmark-button place-card__bookmark-button--active button" type="button">
-                        <svg className="place-card__bookmark-icon" width="18" height="19">
-                            <use href="#icon-bookmark"></use>
-                        </svg>
-                        <span className="visually-hidden">In bookmarks</span>
-                    </button>
+                    {authorizationStatus === AuthorizationStatus.Auth && (
+                        <button className="place-card__bookmark-button place-card__bookmark-button--active button" type="button" onClick={() => dispatch(toggleFavoriteAction({ offerId: id, currentStatus: true }))}>
+                            <svg className="place-card__bookmark-icon" width="18" height="19">
+                                <use href="#icon-bookmark"></use>
+                            </svg>
+                            <span className="visually-hidden">In bookmarks</span>
+                        </button>
+                    )}
                 </div>
                 <div className="place-card__rating rating">
                     <div className="place-card__stars rating__stars">

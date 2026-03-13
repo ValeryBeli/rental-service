@@ -27,6 +27,7 @@ const setOffersDataLoadingStatus = createAction<boolean>('data/setOffersDataLoad
 const setUserDataLoadingStatus = createAction<boolean>('user/setUserDataLoadingStatus');
 
 const updateOfferRating = createAction<number>('offer/updateOfferRating');
+const setOfferFavorite = createAction('offer/setOfferFavorite', (offerId: string, isFavorite: boolean) => ({ payload: { offerId, isFavorite } }));
 
 export {
     changeCity,
@@ -40,6 +41,7 @@ export {
     setOffersDataLoadingStatus,
     setUserDataLoadingStatus,
     updateOfferRating
+    ,setOfferFavorite
 };
 
 export type AuthorizationStatusType = typeof AuthorizationStatus[keyof typeof AuthorizationStatus];

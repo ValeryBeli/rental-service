@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { AuthorizationStatusType, changeCity, offersCityList, requireAuthorization, setUserInfo, setCurrentOffer, setOfferReviews, setOfferDataLoadingStatus, setError, setUserDataLoadingStatus, updateOfferRating } from './action';
+import { AuthorizationStatusType, changeCity, offersCityList, requireAuthorization, setUserInfo, setCurrentOffer, setOfferReviews, setOfferDataLoadingStatus, setError, setUserDataLoadingStatus, updateOfferRating, setOfferFavorite } from './action';
 import { AuthorizationStatus, CITIES_LOCATION } from '../const';
 import { getCity } from '../utils';
 import { CityOffer, OffersList, FullOffer } from '../types/offer';
@@ -68,6 +68,13 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(updateOfferRating, (state, action) => {
       if (state.currentOffer) {
         state.currentOffer.rating = action.payload;
+      }
+    })
+    .addCase(setOfferFavorite, (state, action) => {
+      const { offerId, isFavorite } = action.payload;
+      state.offers = state.offers.map((o) => o.id === offerId ? { ...o, isFavorite } : o);
+      if (state.currentOffer && (state.currentOffer as any).id === offerId) {
+        (state.currentOffer as any).isFavorite = isFavorite;
       }
     })
 

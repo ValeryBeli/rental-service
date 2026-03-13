@@ -1,0 +1,348 @@
+openapi: 3.0.0
+info:
+  title: Housing Rental API
+  version: 1.0.0
+  description: API для работы с предложениями, отзывами и пользователями
+servers:
+  - url: http://localhost:5000
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Offer:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        publishDate:
+          type: string
+          format: date
+        city:
+          type: string
+        isPremium:
+          type: boolean
+        isFavorite:
+          type: boolean
+        rating:
+          type: number
+        type:
+          type: string
+        rooms:
+          type: integer
+        guests:
+          type: integer
+        price:
+          type: number
+        features:
+          type: string
+        commentsCount:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+        userId:
+          type: integer
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        rating:
+          type: integer
+        userId:
+          type: integer
+        offerId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+    UserCredentials:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    UserRegister:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+tags:
+  - name: Users
+  - name: Offers
+  - name: Reviews
+paths:
+  /offers:
+    get:
+      summary: Получить список предложений
+      tags:
+        - Offers
+      responses:
+        "200":
+          description: Список предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Offer"
+    post:
+      summary: Создание нового предложения
+      description: Создает новое предложение (offer). Принимает данные в формате multipart/form-data.
+      tags:
+        - Offers
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - city
+                - price
+                - rooms
+                - guests
+                - previewImage
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                publishDate:
+                  type: string
+                  format: date
+                city:
+                  type: string
+                isPremium:
+                  type: boolean
+                isFavorite:
+                  type: boolean
+                rating:
+                  type: number
+                type:
+                  type: string
+                rooms:
+                  type: integer
+                guests:
+                  type: integer
+                price:
+                  type: number
+                features:
+                  type: string
+                commentsCount:
+                  type: integer
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+                userId:
+                  type: integer
+                previewImage:
+                  type: string
+                  description: Основное изображение (файл)
+                photos:
+                  type: array
+                  items:
+                    type: string
+            examples:
+              generated:
+                summary: Сгенерированный пример (только текстовые поля)
+                value: {}
+      responses:
+        "201":
+          description: Предложение успешно создано
+        "400":
+          description: Ошибка валидации данных
+        "401":
+          description: Не авторизован
+  /offers/{id}:
+    get:
+      summary: Получить полное предложение по id
+      tags:
+        - Offers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Полное предложение
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Offer"
+        "404":
+          description: Не найдено
+  /favorite:
+    get:
+      summary: Получить избранные предложения текущего пользователя
+      tags:
+        - Offers
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Список избранных предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Offer"
+  /favorite/{offerId}/{status}:
+    post:
+      summary: Установить/снять избранное для предложения
+      tags:
+        - Offers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: status
+          in: path
+          required: true
+          schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+      responses:
+        "200":
+          description: Статус избранного обновлён
+  /reviews/{offerId}:
+    get:
+      summary: Получить отзывы для предложения
+      tags:
+        - Reviews
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Список отзывов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+    post:
+      summary: Добавить отзыв к предложению
+      tags:
+        - Reviews
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                rating:
+                  type: integer
+      responses:
+        "201":
+          description: Отзыв добавлен
+  /register:
+    post:
+      summary: Регистрация пользователя
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                avatar:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Пользователь создан
+  /logout:
+    delete:
+      summary: Выйти (удалить сессию/токен)
+      tags:
+        - Users
+      responses:
+        "204":
+          description: Успешный выход
+  /login:
+    get:
+      summary: Проверить авторизацию (получить данные текущего пользователя)
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Информация о пользователе
+        "401":
+          description: Не авторизован
+    post:
+      summary: Авторизация пользователя
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: Ubaldo62@gmail.com
+              password: oJAyeOsyMA
+      responses:
+        "200":
+          description: Успешный логин, возвращает токен
+

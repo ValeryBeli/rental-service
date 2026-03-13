@@ -6,6 +6,9 @@ import errorMiddleware from './middleware/ErrorHandlingMiddleware.js';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+
 
 dotenv.config();
 
@@ -16,6 +19,14 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 
+const swaggerDocument = YAML.load('./docs/swagger.yaml');
+
+// Disable deepLinking to avoid whitespace-escaping warning in the browser UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+    swaggerOptions: {
+        deepLinking: false
+    }
+}));
 app.use(cors());
 app.use(express.json());
 app.use('/static', express.static(path.resolve(__dirname, 'static')));
