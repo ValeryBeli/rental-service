@@ -1,5 +1,4 @@
 import axios, {AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
-import { StatusCodes } from 'http-status-codes';
 import { getToken } from './token';
 import { processErrorHandle } from './process-error-handle';
 
@@ -8,12 +7,16 @@ type DetailMessageType = {
     message: string;
 }
 
+const BAD_REQUEST = 400;
+const UNAUTHORIZED = 401;
+const NOT_FOUND = 404;
+
 const shouldDisplayError = (response: AxiosResponse) => !!StatusCodeMapping[response.status];
 
 const StatusCodeMapping: Record<number, boolean> = {
-    [StatusCodes.BAD_REQUEST]: true,
-    [StatusCodes.UNAUTHORIZED]: true,
-    [StatusCodes.NOT_FOUND]: true
+    [BAD_REQUEST]: true,
+    [UNAUTHORIZED]: true,
+    [NOT_FOUND]: true
 };
 
 const BACKEND_URL = 'http://localhost:5000';
@@ -47,7 +50,7 @@ export const createAPI = (): AxiosInstance => {
             // don't show notification for missing token when checking auth
             if (
                 error.config?.url === '/login' &&
-                error.response?.status === StatusCodes.UNAUTHORIZED
+                error.response?.status === UNAUTHORIZED
             ) {
                 // simply propagate the error without showing message
                 return Promise.reject(error);

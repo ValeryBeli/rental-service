@@ -4,7 +4,7 @@ import { SortOffer } from './types/sort';
 import { SortOffersType } from './const';
 import { FullOffer } from './types/offer';
 
-export function getCity(name: string, cities: CityOffer[]): CityOffer | undefined {
+export function getCity(name: string, cities: CityOffer[] | null | undefined): CityOffer | undefined {
   if (!name || !Array.isArray(cities)) {
     return undefined;
   }

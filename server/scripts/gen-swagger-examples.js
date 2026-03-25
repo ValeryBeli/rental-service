@@ -2,9 +2,7 @@ import fs from "fs";
 import YAML from "yaml";
 import { faker } from "@faker-js/faker";
 
-
 const SWAGGER_PATH = "docs/swagger.yaml";
-
 
 function genLoginExample() {
   return {
@@ -13,36 +11,35 @@ function genLoginExample() {
   };
 }
 
-
-
-const raw = fs.readFileSync(SWAGGER_PATH, "utf-8");
-const doc = YAML.parse(raw);
-
-
-const loginContent = doc?.paths?.["/login"]?.post?.requestBody?.content?.["application/json"];
-if (!loginContent) {
-  console.error("Не найден /login POST requestBody content application/json — проверь swagger.yaml");
-  process.exit(1);
-}
-
-
-loginContent.example = genLoginExample();
-
 function genOfferExample() {
   return {
     title: faker.lorem.words(3),
     description: faker.lorem.paragraph(),
     publishDate: faker.date.recent().toISOString().slice(0, 10),
-    city: faker.location.city(),
+    city: faker.helpers.arrayElement([
+      "Amsterdam",
+      "Paris",
+      "Cologne",
+      "Hamburg",
+      "Dusseldorf",
+      "Brussels"
+    ]),
     isPremium: faker.datatype.boolean(),
     isFavorite: faker.datatype.boolean(),
-    rating: Number(faker.number.float({ min: 1, max: 5, fractionDigits: 1 })),
+    rating: faker.number.int({ min: 1, max: 5 }),
     type: faker.helpers.arrayElement(["apartment", "house", "room", "hotel"]),
     rooms: faker.number.int({ min: 1, max: 5 }),
     guests: faker.number.int({ min: 1, max: 8 }),
-    price: faker.number.int({ min: 50, max: 500 }),
-    features: JSON.stringify(['Breakfast', 'Air conditioning', 'Laptop friendly workspace', 'Baby seat', 'Washer', 'Towels', 'Fridge'
-]),
+    price: faker.number.int({ min: 100, max: 100000 }),
+    features: JSON.stringify([
+      "Breakfast",
+      "Air conditioning",
+      "Laptop friendly workspace",
+      "Baby seat",
+      "Washer",
+      "Towels",
+      "Fridge"
+    ]),
     commentsCount: faker.number.int({ min: 0, max: 50 }),
     latitude: Number(faker.location.latitude()),
     longitude: Number(faker.location.longitude()),
@@ -50,64 +47,83 @@ function genOfferExample() {
   };
 }
 
-const offerContent =
-doc?.paths?.["/offer"]?.post?.requestBody?.content?.["multipart/form-data"];
-
-
-if (offerContent) {
-  // Swagger UI displays example values in different places depending on the UI.
-  // Add the generated example both to the media type (`example`) and to the
-  // schema (`schema.example`) so the UI can pick it up for multipart/form-data.
-  const example = genOfferExample();
-  // Use deep clones when assigning the same example to multiple places so the
-  // YAML serializer does not emit anchors/aliases (some editors/linters flag
-  // anchors). JSON clone is sufficient for our simple data.
-  const clone1 = JSON.parse(JSON.stringify(example));
-  const clone2 = JSON.parse(JSON.stringify(example));
-  offerContent.example = clone1;
-  if (offerContent.schema) {
-    offerContent.schema.example = clone2;
+function genCommentExample() {
+  let comment = faker.lorem.text();
+  while (comment.length < 50) {
+    comment += " " + faker.lorem.text();
   }
-
-  // Remove any old `examples` object to avoid duplicate/conflicting examples.
-  if (offerContent.examples) {
-    delete offerContent.examples;
-  }
-
-  // Also add a media-type `examples` object with `value` — some Swagger UI versions
-  // prefer `examples.<name>.value` for filling form inputs. Keep both to maximize
-  // compatibility.
-  offerContent.examples = {
-    generated: {
-      summary: "Сгенерированный пример (только текстовые поля)",
-      value: JSON.parse(JSON.stringify(example)),
-    },
+  return {
+    comment: comment.slice(0, 120),
+    rating: Number(faker.number.float({ min: 1, max: 5, fractionDigits: 1 }))
   };
-  
-  // Also write examples per-property so Swagger UI form inputs are pre-filled.
-  // For file/binary fields (format: binary) we skip setting property.example.
-  try {
-    const schema = offerContent.schema;
-    if (schema && schema.properties && typeof example === 'object') {
-      Object.entries(example).forEach(([key, val]) => {
-        const prop = schema.properties[key];
-        if (!prop) return;
-        // Skip binary file inputs
-        if (prop.format === 'binary') return;
-        // Set example on the property so Swagger UI uses it as field value
-        prop.example = val;
-      });
+}
+
+function genRegisterExample() {
+  return {
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    username: faker.person.firstName(),
+    userType: faker.helpers.arrayElement(["pro", "regular"])
+  };
+}
+
+const raw = fs.readFileSync(SWAGGER_PATH, "utf-8");
+const doc = YAML.parse(raw);
+
+const loginContent = doc?.paths?.["/login"]?.post?.requestBody?.content?.["application/json"];
+if (!loginContent) {
+  console.error("Не найден /login POST requestBody");
+  process.exit(1);
+}
+loginContent.example = genLoginExample();
+
+const offerSchema = doc?.paths?.["/offers"]?.post?.requestBody?.content?.["multipart/form-data"]?.schema;
+
+if (offerSchema?.properties) {
+  const example = genOfferExample();
+
+  for (const key in example) {
+    if (offerSchema.properties[key]) {
+      offerSchema.properties[key].example = example[key];
     }
-  } catch (err) {
-    // noop - generator should not crash for unexpected schema shapes
   }
 }
 
+const commentSchema = doc?.paths?.["/comments/{offerId}"]?.post?.requestBody?.content?.["application/json"]?.schema;
 
+if (commentSchema?.properties) {
+  const example = genCommentExample();
 
+  for (const key in example) {
+    if (commentSchema.properties[key]) {
+      commentSchema.properties[key].example = example[key];
+    }
+  }
+}
 
+const registerSchema = doc?.paths?.["/register"]?.post?.requestBody?.content?.["multipart/form-data"]?.schema;
+
+if (registerSchema?.properties) {
+  const example = genRegisterExample();
+
+  for (const key in example) {
+    if (registerSchema.properties[key]) {
+      registerSchema.properties[key].example = example[key];
+    }
+  }
+}
+
+const favoriteParams = doc?.paths?.["/favorite/{offerId}/{status}"]?.post?.parameters;
+
+if (Array.isArray(favoriteParams)) {
+  favoriteParams.forEach(param => {
+    if (param.name === "offerId") {
+      param.example = faker.number.int({ min: 1, max: 100 });
+    }
+    if (param.name === "status") {
+      param.example = faker.helpers.arrayElement(["0", "1"]);
+    }
+  });
+}
 
 fs.writeFileSync(SWAGGER_PATH, YAML.stringify(doc), "utf-8");
-
-
-console.log("Готово! Example для POST /login записан в", SWAGGER_PATH);

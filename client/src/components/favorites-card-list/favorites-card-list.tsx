@@ -15,9 +15,13 @@ function FavoritesCardList({ offersList }: FavoritesCardListProps) {
     grouped[name].push(f);
   });
 
+   const sortedCities = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+
    return (
     <ul className="favorites__list">
-      {Object.entries(grouped).map(([city, offers]) => (
+      {sortedCities.map((city) => {
+        const offers = grouped[city];
+        return (
         <li className="favorites__locations-items" key={city}>
           <div className="favorites__locations locations locations--current">
             <div className="locations__item">
@@ -40,7 +44,8 @@ function FavoritesCardList({ offersList }: FavoritesCardListProps) {
             ))}
           </div>
         </li>
-      ))}
+        );
+      })}
     </ul>
   );
 }

@@ -18,11 +18,11 @@ const AuthorizationStatus = {
 } as const;
 
 const SortOffersType = {
-    Popular: 'Popular',
-    PriceToHigh: 'Price: low to high',
-    PriceToLow: 'Price: high to low',
-    TopRated: 'Top rated first',
-} ;
+  Popular: 'Popular',
+  PriceToHigh: 'Price: low to high',
+  PriceToLow: 'Price: high to low',
+  TopRated: 'Top rated first',
+} as const;
 
 const APIRoute = {
   Offers : '/offers',
